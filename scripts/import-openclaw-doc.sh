@@ -1,30 +1,37 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Import a doc from the local OpenClaw repo into this study repo.
+# Move a STUDY document inside this repository.
+# (Not for importing from the upstream openclaw repo.)
+#
 # Usage:
+#   scripts/import-openclaw-doc.sh <source-relative-path> <dest-relative-path>
+#
+# Example:
 #   scripts/import-openclaw-doc.sh \
-#     /Users/pray/work/js/openclaw/docs/development/tool-schema-normalization-gemini-openai.md \
+#     topics/tmp/gemini-openai-notes.md \
 #     topics/tool-schema-normalization/README.md
 
 if [[ $# -lt 2 ]]; then
-  echo "Usage: $0 <source-file> <dest-relative-path>"
+  echo "Usage: $0 <source-relative-path> <dest-relative-path>"
   exit 1
 fi
 
-SRC="$1"
-DEST_REL="$2"
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SRC_REL="$1"
+DEST_REL="$2"
+SRC="$REPO_ROOT/$SRC_REL"
 DEST="$REPO_ROOT/$DEST_REL"
 
 if [[ ! -f "$SRC" ]]; then
-  echo "[ERROR] Source file not found: $SRC"
+  echo "[ERROR] Study doc not found in repo: $SRC_REL"
+  echo "        resolved path: $SRC"
   exit 1
 fi
 
 mkdir -p "$(dirname "$DEST")"
-cp "$SRC" "$DEST"
+mv "$SRC" "$DEST"
 
-echo "[OK] Copied"
-echo "  from: $SRC"
-echo "  to:   $DEST"
+echo "[OK] Moved study doc"
+echo "  from: $SRC_REL"
+echo "  to:   $DEST_REL"
